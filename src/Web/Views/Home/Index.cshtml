@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<button id="insertCustomer">測試寫入客戶</button>
+<button id="updateCustomer">測試更新客戶</button>
+<button id="deleteCustomer">測試刪除客戶</button>
+
+@section Scripts {
+    <script src="~/js/custom/indexPage.js" asp-append-version="true"></script>
+}
