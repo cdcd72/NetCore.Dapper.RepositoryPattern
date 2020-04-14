@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Web.Core.Enum;
-using Web.Repositories.Interface;
-using Web.Repositories.Implement;
+using Microsoft.Extensions.Hosting;
 using System.Data;
 using Web.Core;
+using Web.Core.Enum;
+using Web.Repositories.Implement;
+using Web.Repositories.Interface;
 
 namespace Web
 {
@@ -36,21 +35,15 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
+            services.AddControllers();
+            services.AddRazorPages();
 
             // 每一 Request 都注入一個新實例
             services.AddScoped<ICustomerRepository>(x => new CustomerRepository(GetConnection(Configuration)));
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -64,16 +57,21 @@ namespace Web
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCookiePolicy();
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
+            app.UseRouting();
+
+            app.UseAuthentication();
+
+            app.UseEndpoints(endpoints => {
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-                routes.MapRoute(
+                    pattern: "{controller=Home}/{action=Index}/{id?}"
+                );
+                endpoints.MapControllerRoute(
                     name: "customer",
-                    template: "{controller=Customer}/{action=Customers}/{id?}");
+                    pattern: "{controller=Customer}/{action=Customers}/{id?}"
+                );
+                endpoints.MapRazorPages();
             });
         }
 
