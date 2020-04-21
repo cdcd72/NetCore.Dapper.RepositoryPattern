@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Web.Domain;
 
-namespace Web.Repositories.Interface
+namespace Web.Core.Interfaces
 {
     public interface ICustomerRepository
     {

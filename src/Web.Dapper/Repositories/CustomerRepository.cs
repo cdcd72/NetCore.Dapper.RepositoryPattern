@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using Web.Core.Interfaces;
 using Web.Domain;
-using Web.Repositories.Interface;
 
-namespace Web.Repositories.Implement
+namespace Web.Dapper.Repositories
 {
     public class CustomerRepository : ICustomerRepository
     {
@@ -17,9 +17,12 @@ namespace Web.Repositories.Implement
 
         #region Constructor
 
-        public CustomerRepository(IDbConnection connection)
+        public CustomerRepository(IConnectionFactory connectionFactory)
         {
-            Conn = connection;
+            Conn = connectionFactory.GetConnection();
+
+            // 開啟連線
+            Conn.Open();
         }
 
         #endregion
